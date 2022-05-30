@@ -34,7 +34,7 @@
 		default_layer {
 			bindings = <
 				&kp F13 &kp F14 &kp F15 &kp F16
-                &kp F17 &kp F18 &kp F19 &mo LOWER
+				&kp F17 &kp F18 &kp F19 &mo LOWER
 				>;
 		};
 
