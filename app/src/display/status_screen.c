@@ -16,6 +16,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_BATTERY_STATUS)
 static struct zmk_widget_battery_status battery_status_widget;
+static struct zmk_widget_battery_status peripheral_battery_status_widget;
 #endif
 
 #if IS_ENABLED(CONFIG_ZMK_WIDGET_OUTPUT_STATUS)

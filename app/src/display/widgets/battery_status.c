@@ -13,6 +13,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/display.h>
 #include <zmk/display/widgets/battery_status.h>
 #include <zmk/usb.h>
+#include <zmk/ble.h>
 #include <zmk/events/usb_conn_state_changed.h>
 #include <zmk/event_manager.h>
 #include <zmk/events/battery_state_changed.h>
@@ -65,7 +66,7 @@ void battery_status_update_cb(struct battery_status_state state) {
 static struct battery_status_state battery_status_get_state(const zmk_event_t *eh) {
     const struct zmk_battery_state_changed *ev = as_zmk_battery_state_changed(eh);
 
-    return (struct battery_status_state) {
+    return (struct battery_status_state){
         .level = (ev != NULL) ? ev->state_of_charge : zmk_battery_state_of_charge(),
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
         .usb_present = zmk_usb_is_powered(),
@@ -83,6 +84,18 @@ ZMK_SUBSCRIPTION(widget_battery_status, zmk_usb_conn_state_changed);
 
 int zmk_widget_battery_status_init(struct zmk_widget_battery_status *widget, lv_obj_t *parent) {
     widget->obj = lv_label_create(parent);
+
+    lv_obj_set_size(widget->obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+
+    for (int i = 0; i < ZMK_SPLIT_BLE_PERIPHERAL_COUNT; i++) {
+        lv_obj_t *image_canvas = lv_canvas_create(widget->obj);
+        lv_obj_t *battery_label = lv_label_create(widget->obj);
+
+        lv_canvas_set_buffer(image_canvas, battery_image_buffer[i], 5, 8, LV_IMG_CF_TRUE_COLOR);
+
+        lv_obj_align(image_canvas, LV_ALIGN_TOP_RIGHT, 0, i * 10);
+        lv_obj_align(battery_label, LV_ALIGN_TOP_RIGHT, -7, i * 10);
+    }
 
     sys_slist_append(&widgets, &widget->node);
 
